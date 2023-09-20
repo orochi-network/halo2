@@ -526,8 +526,8 @@
         <span class="kw">let </span><span class="kw-2">mut </span>g_lagrange_projective = <span class="macro">vec!</span>[E::G1::identity(); n <span class="kw">as </span>usize];
         <span class="kw">let </span><span class="kw-2">mut </span>root = E::Scalar::ROOT_OF_UNITY;
         <span class="kw">for _ in </span>k..E::Scalar::S {
-             root = root.square();
-         }
+            root = root.square();
+        }
         <span class="kw">let </span>n_inv = E::Scalar::from(n)
             .invert()
             .expect(<span class="string">&quot;inversion should be ok for n = 1&lt;&lt;k&quot;</span>);
