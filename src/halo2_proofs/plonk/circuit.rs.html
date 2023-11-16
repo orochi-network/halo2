@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `halo2_proofs/src/plonk/circuit.rs`."><title>circuit.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="halo2_proofs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.0-nightly (3223b0b5e 2023-09-20)" data-channel="nightly" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `halo2_proofs/src/plonk/circuit.rs`."><title>circuit.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="halo2_proofs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.76.0-nightly (6b771f6b5 2023-11-15)" data-channel="nightly" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-f06f02fd918e3bb3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js"                  integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/contrib/auto-render.min.js"    integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"></script>
 <script>
@@ -13,7 +13,7 @@
         });
     });
 </script>
-</head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../halo2_proofs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+</head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2454,6 +2454,150 @@
 <a href="#2439" id="2439">2439</a>
 <a href="#2440" id="2440">2440</a>
 <a href="#2441" id="2441">2441</a>
+<a href="#2442" id="2442">2442</a>
+<a href="#2443" id="2443">2443</a>
+<a href="#2444" id="2444">2444</a>
+<a href="#2445" id="2445">2445</a>
+<a href="#2446" id="2446">2446</a>
+<a href="#2447" id="2447">2447</a>
+<a href="#2448" id="2448">2448</a>
+<a href="#2449" id="2449">2449</a>
+<a href="#2450" id="2450">2450</a>
+<a href="#2451" id="2451">2451</a>
+<a href="#2452" id="2452">2452</a>
+<a href="#2453" id="2453">2453</a>
+<a href="#2454" id="2454">2454</a>
+<a href="#2455" id="2455">2455</a>
+<a href="#2456" id="2456">2456</a>
+<a href="#2457" id="2457">2457</a>
+<a href="#2458" id="2458">2458</a>
+<a href="#2459" id="2459">2459</a>
+<a href="#2460" id="2460">2460</a>
+<a href="#2461" id="2461">2461</a>
+<a href="#2462" id="2462">2462</a>
+<a href="#2463" id="2463">2463</a>
+<a href="#2464" id="2464">2464</a>
+<a href="#2465" id="2465">2465</a>
+<a href="#2466" id="2466">2466</a>
+<a href="#2467" id="2467">2467</a>
+<a href="#2468" id="2468">2468</a>
+<a href="#2469" id="2469">2469</a>
+<a href="#2470" id="2470">2470</a>
+<a href="#2471" id="2471">2471</a>
+<a href="#2472" id="2472">2472</a>
+<a href="#2473" id="2473">2473</a>
+<a href="#2474" id="2474">2474</a>
+<a href="#2475" id="2475">2475</a>
+<a href="#2476" id="2476">2476</a>
+<a href="#2477" id="2477">2477</a>
+<a href="#2478" id="2478">2478</a>
+<a href="#2479" id="2479">2479</a>
+<a href="#2480" id="2480">2480</a>
+<a href="#2481" id="2481">2481</a>
+<a href="#2482" id="2482">2482</a>
+<a href="#2483" id="2483">2483</a>
+<a href="#2484" id="2484">2484</a>
+<a href="#2485" id="2485">2485</a>
+<a href="#2486" id="2486">2486</a>
+<a href="#2487" id="2487">2487</a>
+<a href="#2488" id="2488">2488</a>
+<a href="#2489" id="2489">2489</a>
+<a href="#2490" id="2490">2490</a>
+<a href="#2491" id="2491">2491</a>
+<a href="#2492" id="2492">2492</a>
+<a href="#2493" id="2493">2493</a>
+<a href="#2494" id="2494">2494</a>
+<a href="#2495" id="2495">2495</a>
+<a href="#2496" id="2496">2496</a>
+<a href="#2497" id="2497">2497</a>
+<a href="#2498" id="2498">2498</a>
+<a href="#2499" id="2499">2499</a>
+<a href="#2500" id="2500">2500</a>
+<a href="#2501" id="2501">2501</a>
+<a href="#2502" id="2502">2502</a>
+<a href="#2503" id="2503">2503</a>
+<a href="#2504" id="2504">2504</a>
+<a href="#2505" id="2505">2505</a>
+<a href="#2506" id="2506">2506</a>
+<a href="#2507" id="2507">2507</a>
+<a href="#2508" id="2508">2508</a>
+<a href="#2509" id="2509">2509</a>
+<a href="#2510" id="2510">2510</a>
+<a href="#2511" id="2511">2511</a>
+<a href="#2512" id="2512">2512</a>
+<a href="#2513" id="2513">2513</a>
+<a href="#2514" id="2514">2514</a>
+<a href="#2515" id="2515">2515</a>
+<a href="#2516" id="2516">2516</a>
+<a href="#2517" id="2517">2517</a>
+<a href="#2518" id="2518">2518</a>
+<a href="#2519" id="2519">2519</a>
+<a href="#2520" id="2520">2520</a>
+<a href="#2521" id="2521">2521</a>
+<a href="#2522" id="2522">2522</a>
+<a href="#2523" id="2523">2523</a>
+<a href="#2524" id="2524">2524</a>
+<a href="#2525" id="2525">2525</a>
+<a href="#2526" id="2526">2526</a>
+<a href="#2527" id="2527">2527</a>
+<a href="#2528" id="2528">2528</a>
+<a href="#2529" id="2529">2529</a>
+<a href="#2530" id="2530">2530</a>
+<a href="#2531" id="2531">2531</a>
+<a href="#2532" id="2532">2532</a>
+<a href="#2533" id="2533">2533</a>
+<a href="#2534" id="2534">2534</a>
+<a href="#2535" id="2535">2535</a>
+<a href="#2536" id="2536">2536</a>
+<a href="#2537" id="2537">2537</a>
+<a href="#2538" id="2538">2538</a>
+<a href="#2539" id="2539">2539</a>
+<a href="#2540" id="2540">2540</a>
+<a href="#2541" id="2541">2541</a>
+<a href="#2542" id="2542">2542</a>
+<a href="#2543" id="2543">2543</a>
+<a href="#2544" id="2544">2544</a>
+<a href="#2545" id="2545">2545</a>
+<a href="#2546" id="2546">2546</a>
+<a href="#2547" id="2547">2547</a>
+<a href="#2548" id="2548">2548</a>
+<a href="#2549" id="2549">2549</a>
+<a href="#2550" id="2550">2550</a>
+<a href="#2551" id="2551">2551</a>
+<a href="#2552" id="2552">2552</a>
+<a href="#2553" id="2553">2553</a>
+<a href="#2554" id="2554">2554</a>
+<a href="#2555" id="2555">2555</a>
+<a href="#2556" id="2556">2556</a>
+<a href="#2557" id="2557">2557</a>
+<a href="#2558" id="2558">2558</a>
+<a href="#2559" id="2559">2559</a>
+<a href="#2560" id="2560">2560</a>
+<a href="#2561" id="2561">2561</a>
+<a href="#2562" id="2562">2562</a>
+<a href="#2563" id="2563">2563</a>
+<a href="#2564" id="2564">2564</a>
+<a href="#2565" id="2565">2565</a>
+<a href="#2566" id="2566">2566</a>
+<a href="#2567" id="2567">2567</a>
+<a href="#2568" id="2568">2568</a>
+<a href="#2569" id="2569">2569</a>
+<a href="#2570" id="2570">2570</a>
+<a href="#2571" id="2571">2571</a>
+<a href="#2572" id="2572">2572</a>
+<a href="#2573" id="2573">2573</a>
+<a href="#2574" id="2574">2574</a>
+<a href="#2575" id="2575">2575</a>
+<a href="#2576" id="2576">2576</a>
+<a href="#2577" id="2577">2577</a>
+<a href="#2578" id="2578">2578</a>
+<a href="#2579" id="2579">2579</a>
+<a href="#2580" id="2580">2580</a>
+<a href="#2581" id="2581">2581</a>
+<a href="#2582" id="2582">2582</a>
+<a href="#2583" id="2583">2583</a>
+<a href="#2584" id="2584">2584</a>
+<a href="#2585" id="2585">2585</a>
 </pre></div><pre class="rust"><code><span class="kw">use super</span>::{lookup, permutation, shuffle, Assigned, Error};
 <span class="kw">use </span><span class="kw">crate</span>::circuit::layouter::SyncDeps;
 <span class="kw">use </span><span class="kw">crate</span>::dev::metadata;
@@ -2467,6 +2611,7 @@
 <span class="kw">use </span>sealed::SealedPhase;
 <span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>std::fmt::Debug;
+<span class="kw">use </span>std::iter::{Product, Sum};
 <span class="kw">use </span>std::{
     convert::TryFrom,
     ops::{Neg, Sub},
@@ -2934,7 +3079,7 @@
 }
 
 <span class="doccomment">/// Query of fixed column at a certain relative location
-</span><span class="attr">#[derive(Copy, Clone, Debug)]
+</span><span class="attr">#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 </span><span class="kw">pub struct </span>FixedQuery {
     <span class="doccomment">/// Query index
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) index: <span class="prelude-ty">Option</span>&lt;usize&gt;,
@@ -2957,7 +3102,7 @@
 }
 
 <span class="doccomment">/// Query of advice column at a certain relative location
-</span><span class="attr">#[derive(Copy, Clone, Debug)]
+</span><span class="attr">#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 </span><span class="kw">pub struct </span>AdviceQuery {
     <span class="doccomment">/// Query index
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) index: <span class="prelude-ty">Option</span>&lt;usize&gt;,
@@ -2987,7 +3132,7 @@
 }
 
 <span class="doccomment">/// Query of instance column at a certain relative location
-</span><span class="attr">#[derive(Copy, Clone, Debug)]
+</span><span class="attr">#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 </span><span class="kw">pub struct </span>InstanceQuery {
     <span class="doccomment">/// Query index
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) index: <span class="prelude-ty">Option</span>&lt;usize&gt;,
@@ -3248,7 +3393,7 @@
 }
 
 <span class="doccomment">/// Low-degree expression representing an identity that must hold over the committed columns.
-</span><span class="attr">#[derive(Clone)]
+</span><span class="attr">#[derive(Clone, PartialEq, Eq)]
 </span><span class="kw">pub enum </span>Expression&lt;F&gt; {
     <span class="doccomment">/// This is a constant polynomial
     </span>Constant(F),
@@ -3808,6 +3953,20 @@
     }
 }
 
+<span class="kw">impl</span>&lt;F: Field&gt; Sum&lt;<span class="self">Self</span>&gt; <span class="kw">for </span>Expression&lt;F&gt; {
+    <span class="kw">fn </span>sum&lt;I: Iterator&lt;Item = <span class="self">Self</span>&gt;&gt;(iter: I) -&gt; <span class="self">Self </span>{
+        iter.reduce(|acc, x| acc + x)
+            .unwrap_or(Expression::Constant(F::ZERO))
+    }
+}
+
+<span class="kw">impl</span>&lt;F: Field&gt; Product&lt;<span class="self">Self</span>&gt; <span class="kw">for </span>Expression&lt;F&gt; {
+    <span class="kw">fn </span>product&lt;I: Iterator&lt;Item = <span class="self">Self</span>&gt;&gt;(iter: I) -&gt; <span class="self">Self </span>{
+        iter.reduce(|acc, x| acc * x)
+            .unwrap_or(Expression::Constant(F::ONE))
+    }
+}
+
 <span class="doccomment">/// Represents an index into a vector where each entry corresponds to a distinct
 /// point that polynomials are queried at.
 </span><span class="attr">#[derive(Copy, Clone, Debug)]
@@ -3996,6 +4155,9 @@
     <span class="kw">pub</span>(<span class="kw">crate</span>) num_selectors: usize,
     <span class="kw">pub</span>(<span class="kw">crate</span>) num_challenges: usize,
 
+    <span class="doccomment">/// Contains the index of each advice column that is left unblinded.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) unblinded_advice_columns: Vec&lt;usize&gt;,
+
     <span class="doccomment">/// Contains the phase for each advice column. Should have same length as num_advice_columns.
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) advice_column_phase: Vec&lt;sealed::Phase&gt;,
     <span class="doccomment">/// Contains the phase for each challenge. Should have same length as num_challenges.
@@ -4078,7 +4240,11 @@
             .field(<span class="string">&quot;instance_queries&quot;</span>, <span class="self">self</span>.instance_queries)
             .field(<span class="string">&quot;fixed_queries&quot;</span>, <span class="self">self</span>.fixed_queries)
             .field(<span class="string">&quot;permutation&quot;</span>, <span class="self">self</span>.permutation)
-            .field(<span class="string">&quot;lookups&quot;</span>, <span class="self">self</span>.lookups)
+            .field(<span class="string">&quot;lookups&quot;</span>, <span class="self">self</span>.lookups);
+        <span class="kw">if </span>!<span class="self">self</span>.shuffles.is_empty() {
+            debug_struct.field(<span class="string">&quot;shuffles&quot;</span>, <span class="self">self</span>.shuffles);
+        }
+        debug_struct
             .field(<span class="string">&quot;constants&quot;</span>, <span class="self">self</span>.constants)
             .field(<span class="string">&quot;minimum_degree&quot;</span>, <span class="self">self</span>.minimum_degree);
         debug_struct.finish()
@@ -4103,6 +4269,7 @@
             num_instance_columns: <span class="number">0</span>,
             num_selectors: <span class="number">0</span>,
             num_challenges: <span class="number">0</span>,
+            unblinded_advice_columns: Vec::new(),
             advice_column_phase: Vec::new(),
             challenge_phase: Vec::new(),
             selector_map: <span class="macro">vec!</span>[],
@@ -4208,6 +4375,12 @@
         <span class="kw">let </span>table_map = table_map(<span class="kw-2">&amp;mut </span>cells)
             .into_iter()
             .map(|(<span class="kw-2">mut </span>input, <span class="kw-2">mut </span>table)| {
+                <span class="kw">if </span>input.contains_simple_selector() {
+                    <span class="macro">panic!</span>(<span class="string">&quot;expression containing simple selector supplied to lookup argument&quot;</span>);
+                }
+                <span class="kw">if </span>table.contains_simple_selector() {
+                    <span class="macro">panic!</span>(<span class="string">&quot;expression containing simple selector supplied to lookup argument&quot;</span>);
+                }
                 input.query_cells(<span class="kw-2">&amp;mut </span>cells);
                 table.query_cells(<span class="kw-2">&amp;mut </span>cells);
                 (input, table)
@@ -4460,7 +4633,45 @@
             .into_iter()
             .map(|a| a.unwrap())
             .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
+        <span class="self">self</span>.replace_selectors_with_fixed(<span class="kw-2">&amp;</span>selector_replacements);
 
+        (<span class="self">self</span>, polys)
+    }
+
+    <span class="doccomment">/// Does not combine selectors and directly replaces them everywhere with fixed columns.
+    </span><span class="kw">pub fn </span>directly_convert_selectors_to_fixed(
+        <span class="kw-2">mut </span><span class="self">self</span>,
+        selectors: Vec&lt;Vec&lt;bool&gt;&gt;,
+    ) -&gt; (<span class="self">Self</span>, Vec&lt;Vec&lt;F&gt;&gt;) {
+        <span class="comment">// The number of provided selector assignments must be the number we
+        // counted for this constraint system.
+        </span><span class="macro">assert_eq!</span>(selectors.len(), <span class="self">self</span>.num_selectors);
+
+        <span class="kw">let </span>(polys, selector_replacements): (Vec&lt;<span class="kw">_</span>&gt;, Vec&lt;<span class="kw">_</span>&gt;) = selectors
+            .into_iter()
+            .map(|selector| {
+                <span class="kw">let </span>poly = selector
+                    .iter()
+                    .map(|b| <span class="kw">if </span><span class="kw-2">*</span>b { F::ONE } <span class="kw">else </span>{ F::ZERO })
+                    .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
+                <span class="kw">let </span>column = <span class="self">self</span>.fixed_column();
+                <span class="kw">let </span>rotation = Rotation::cur();
+                <span class="kw">let </span>expr = Expression::Fixed(FixedQuery {
+                    index: <span class="prelude-val">Some</span>(<span class="self">self</span>.query_fixed_index(column, rotation)),
+                    column_index: column.index,
+                    rotation,
+                });
+                (poly, expr)
+            })
+            .unzip();
+
+        <span class="self">self</span>.replace_selectors_with_fixed(<span class="kw-2">&amp;</span>selector_replacements);
+        <span class="self">self</span>.num_selectors = <span class="number">0</span>;
+
+        (<span class="self">self</span>, polys)
+    }
+
+    <span class="kw">fn </span>replace_selectors_with_fixed(<span class="kw-2">&amp;mut </span><span class="self">self</span>, selector_replacements: <span class="kw-2">&amp;</span>[Expression&lt;F&gt;]) {
         <span class="kw">fn </span>replace_selectors&lt;F: Field&gt;(
             expr: <span class="kw-2">&amp;mut </span>Expression&lt;F&gt;,
             selector_replacements: <span class="kw-2">&amp;</span>[Expression&lt;F&gt;],
@@ -4491,7 +4702,7 @@
 
         <span class="comment">// Substitute selectors for the real fixed columns in all gates
         </span><span class="kw">for </span>expr <span class="kw">in </span><span class="self">self</span>.gates.iter_mut().flat_map(|gate| gate.polys.iter_mut()) {
-            replace_selectors(expr, <span class="kw-2">&amp;</span>selector_replacements, <span class="bool-val">false</span>);
+            replace_selectors(expr, selector_replacements, <span class="bool-val">false</span>);
         }
 
         <span class="comment">// Substitute non-simple selectors for the real fixed columns in all
@@ -4502,7 +4713,7 @@
                 .iter_mut()
                 .chain(lookup.table_expressions.iter_mut())
         }) {
-            replace_selectors(expr, <span class="kw-2">&amp;</span>selector_replacements, <span class="bool-val">true</span>);
+            replace_selectors(expr, selector_replacements, <span class="bool-val">true</span>);
         }
 
         <span class="kw">for </span>expr <span class="kw">in </span><span class="self">self</span>.shuffles.iter_mut().flat_map(|shuffle| {
@@ -4511,10 +4722,8 @@
                 .iter_mut()
                 .chain(shuffle.shuffle_expressions.iter_mut())
         }) {
-            replace_selectors(expr, <span class="kw-2">&amp;</span>selector_replacements, <span class="bool-val">true</span>);
+            replace_selectors(expr, selector_replacements, <span class="bool-val">true</span>);
         }
-
-        (<span class="self">self</span>, polys)
     }
 
     <span class="doccomment">/// Allocate a new (simple) selector. Simple selectors cannot be added to
@@ -4580,12 +4789,43 @@
         tmp
     }
 
+    <span class="doccomment">/// Allocate a new unblinded advice column at `FirstPhase`
+    </span><span class="kw">pub fn </span>unblinded_advice_column(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Column&lt;Advice&gt; {
+        <span class="self">self</span>.unblinded_advice_column_in(FirstPhase)
+    }
+
     <span class="doccomment">/// Allocate a new advice column at `FirstPhase`
     </span><span class="kw">pub fn </span>advice_column(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Column&lt;Advice&gt; {
         <span class="self">self</span>.advice_column_in(FirstPhase)
     }
 
+    <span class="doccomment">/// Allocate a new unblinded advice column in given phase. This allows for the generation of deterministic commitments to advice columns
+    /// which can be used to split large circuits into smaller ones, whose proofs can then be &quot;joined&quot; together by their common witness commitments.
+    </span><span class="kw">pub fn </span>unblinded_advice_column_in&lt;P: Phase&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, phase: P) -&gt; Column&lt;Advice&gt; {
+        <span class="kw">let </span>phase = phase.to_sealed();
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(previous_phase) = phase.prev() {
+            <span class="self">self</span>.assert_phase_exists(
+                previous_phase,
+                <span class="macro">format!</span>(<span class="string">&quot;Column&lt;Advice&gt; in later phase {:?}&quot;</span>, phase).as_str(),
+            );
+        }
+
+        <span class="kw">let </span>tmp = Column {
+            index: <span class="self">self</span>.num_advice_columns,
+            column_type: Advice { phase },
+        };
+        <span class="self">self</span>.unblinded_advice_columns.push(tmp.index);
+        <span class="self">self</span>.num_advice_columns += <span class="number">1</span>;
+        <span class="self">self</span>.num_advice_queries.push(<span class="number">0</span>);
+        <span class="self">self</span>.advice_column_phase.push(phase);
+        tmp
+    }
+
     <span class="doccomment">/// Allocate a new advice column in given phase
+    ///
+    /// # Panics
+    ///
+    /// It panics if previous phase before the given one doesn&#39;t have advice column allocated.
     </span><span class="kw">pub fn </span>advice_column_in&lt;P: Phase&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, phase: P) -&gt; Column&lt;Advice&gt; {
         <span class="kw">let </span>phase = phase.to_sealed();
         <span class="kw">if let </span><span class="prelude-val">Some</span>(previous_phase) = phase.prev() {
@@ -4616,6 +4856,10 @@
     }
 
     <span class="doccomment">/// Requests a challenge that is usable after the given phase.
+    ///
+    /// # Panics
+    ///
+    /// It panics if the given phase doesn&#39;t have advice column allocated.
     </span><span class="kw">pub fn </span>challenge_usable_after&lt;P: Phase&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, phase: P) -&gt; Challenge {
         <span class="kw">let </span>phase = phase.to_sealed();
         <span class="self">self</span>.assert_phase_exists(
@@ -4893,6 +5137,50 @@
     <span class="doccomment">/// Query a challenge
     </span><span class="kw">pub fn </span>query_challenge(<span class="kw-2">&amp;mut </span><span class="self">self</span>, challenge: Challenge) -&gt; Expression&lt;F&gt; {
         Expression::Challenge(challenge)
+    }
+}
+
+<span class="attr">#[cfg(test)]
+</span><span class="kw">mod </span>tests {
+    <span class="kw">use </span><span class="kw">super</span>::Expression;
+    <span class="kw">use </span>halo2curves::bn256::Fr;
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>iter_sum() {
+        <span class="kw">let </span>exprs: Vec&lt;Expression&lt;Fr&gt;&gt; = <span class="macro">vec!</span>[
+            Expression::Constant(<span class="number">1</span>.into()),
+            Expression::Constant(<span class="number">2</span>.into()),
+            Expression::Constant(<span class="number">3</span>.into()),
+        ];
+        <span class="kw">let </span>happened: Expression&lt;Fr&gt; = exprs.into_iter().sum();
+        <span class="kw">let </span>expected: Expression&lt;Fr&gt; = Expression::Sum(
+            Box::new(Expression::Sum(
+                Box::new(Expression::Constant(<span class="number">1</span>.into())),
+                Box::new(Expression::Constant(<span class="number">2</span>.into())),
+            )),
+            Box::new(Expression::Constant(<span class="number">3</span>.into())),
+        );
+
+        <span class="macro">assert_eq!</span>(happened, expected);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>iter_product() {
+        <span class="kw">let </span>exprs: Vec&lt;Expression&lt;Fr&gt;&gt; = <span class="macro">vec!</span>[
+            Expression::Constant(<span class="number">1</span>.into()),
+            Expression::Constant(<span class="number">2</span>.into()),
+            Expression::Constant(<span class="number">3</span>.into()),
+        ];
+        <span class="kw">let </span>happened: Expression&lt;Fr&gt; = exprs.into_iter().product();
+        <span class="kw">let </span>expected: Expression&lt;Fr&gt; = Expression::Product(
+            Box::new(Expression::Product(
+                Box::new(Expression::Constant(<span class="number">1</span>.into())),
+                Box::new(Expression::Constant(<span class="number">2</span>.into())),
+            )),
+            Box::new(Expression::Constant(<span class="number">3</span>.into())),
+        );
+
+        <span class="macro">assert_eq!</span>(happened, expected);
     }
 }
 </code></pre></div></section></main></body></html>
