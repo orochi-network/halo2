@@ -150,6 +150,24 @@
 <a href="#135" id="135">135</a>
 <a href="#136" id="136">136</a>
 <a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::fmt::Debug;
 
 <span class="kw">use </span><span class="kw">super</span>::commitment::{Blind, MSM};
@@ -179,8 +197,8 @@
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) blind: Blind&lt;C::Scalar&gt;,
 }
 
-<span class="attr">#[doc(hidden)]
-#[derive(Copy, Clone)]
+
+<span class="attr">#[derive(Copy, Clone)]
 </span><span class="kw">pub struct </span>PolynomialPointer&lt;<span class="lifetime">&#39;com</span>, C: CurveAffine&gt; {
     <span class="kw">pub</span>(<span class="kw">crate</span>) poly: <span class="kw-2">&amp;</span><span class="lifetime">&#39;com </span>Polynomial&lt;C::Scalar, Coeff&gt;,
     <span class="kw">pub</span>(<span class="kw">crate</span>) blind: Blind&lt;C::Scalar&gt;,
@@ -206,6 +224,24 @@
         PolynomialPointer {
             poly: <span class="self">self</span>.poly,
             blind: <span class="self">self</span>.blind,
+        }
+    }
+}
+
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;com</span>, C: CurveAffine&gt; ProverQuery&lt;<span class="lifetime">&#39;com</span>, C&gt; {
+    <span class="doccomment">/// create a new prover query
+    </span><span class="kw">pub fn </span>new_query( 
+        point:C::Scalar, 
+        poly:<span class="kw-2">&amp;</span><span class="lifetime">&#39;com </span>Polynomial&lt;C::Scalar, Coeff&gt;,
+        blind: Blind&lt;C::Scalar&gt;
+    ) -&gt; <span class="self">Self
+    </span>{
+
+        ProverQuery{ 
+            point:point, 
+            poly:poly, 
+            blind:blind
         }
     }
 }
