@@ -150,6 +150,39 @@
 <a href="#135" id="135">135</a>
 <a href="#136" id="136">136</a>
 <a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::fmt::Debug;
 
 <span class="kw">use </span><span class="kw">super</span>::commitment::{Blind, MSM};
@@ -171,12 +204,26 @@
 <span class="doccomment">/// A polynomial query at a point
 </span><span class="attr">#[derive(Debug, Clone)]
 </span><span class="kw">pub struct </span>ProverQuery&lt;<span class="lifetime">&#39;com</span>, C: CurveAffine&gt; {
-    <span class="doccomment">/// point at which polynomial is queried
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) point: C::Scalar,
-    <span class="doccomment">/// coefficients of polynomial
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) poly: <span class="kw-2">&amp;</span><span class="lifetime">&#39;com </span>Polynomial&lt;C::Scalar, Coeff&gt;,
-    <span class="doccomment">/// blinding factor of polynomial
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) blind: Blind&lt;C::Scalar&gt;,
+    <span class="doccomment">/// Point at which polynomial is queried
+    </span><span class="kw">pub </span>point: C::Scalar,
+    <span class="doccomment">/// Coefficients of polynomial
+    </span><span class="kw">pub </span>poly: <span class="kw-2">&amp;</span><span class="lifetime">&#39;com </span>Polynomial&lt;C::Scalar, Coeff&gt;,
+    <span class="doccomment">/// Blinding factor of polynomial
+    </span><span class="kw">pub </span>blind: Blind&lt;C::Scalar&gt;,
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;com</span>, C&gt; ProverQuery&lt;<span class="lifetime">&#39;com</span>, C&gt;
+<span class="kw">where
+    </span>C: CurveAffine,
+{
+    <span class="doccomment">/// Create a new prover query based on a polynomial
+    </span><span class="kw">pub fn </span>new(
+        point: C::Scalar,
+        poly: <span class="kw-2">&amp;</span><span class="lifetime">&#39;com </span>Polynomial&lt;C::Scalar, Coeff&gt;,
+        blind: Blind&lt;C::Scalar&gt;,
+    ) -&gt; <span class="self">Self </span>{
+        ProverQuery { point, poly, blind }
+    }
 }
 
 <span class="attr">#[doc(hidden)]
@@ -233,12 +280,31 @@
 <span class="doccomment">/// A polynomial query at a point
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>VerifierQuery&lt;<span class="lifetime">&#39;com</span>, C: CurveAffine, M: MSM&lt;C&gt;&gt; {
-    <span class="doccomment">/// point at which polynomial is queried
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) point: C::Scalar,
-    <span class="doccomment">/// commitment to polynomial
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) commitment: CommitmentReference&lt;<span class="lifetime">&#39;com</span>, C, M&gt;,
-    <span class="doccomment">/// evaluation of polynomial at query point
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) eval: C::Scalar,
+    <span class="doccomment">/// Point at which polynomial is queried
+    </span><span class="kw">pub </span>point: C::Scalar,
+    <span class="doccomment">/// Commitment to polynomial
+    </span><span class="kw">pub </span>commitment: CommitmentReference&lt;<span class="lifetime">&#39;com</span>, C, M&gt;,
+    <span class="doccomment">/// Evaluation of polynomial at query point
+    </span><span class="kw">pub </span>eval: C::Scalar,
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;com</span>, C, M&gt; VerifierQuery&lt;<span class="lifetime">&#39;com</span>, C, M&gt;
+<span class="kw">where
+    </span>C: CurveAffine,
+    M: MSM&lt;C&gt;,
+{
+    <span class="doccomment">/// Create a new verifier query based on a commitment
+    </span><span class="kw">pub fn </span>new(
+        point: C::Scalar,
+        commitment: CommitmentReference&lt;<span class="lifetime">&#39;com</span>, C, M&gt;,
+        eval: C::Scalar,
+    ) -&gt; <span class="self">Self </span>{
+        VerifierQuery {
+            point,
+            commitment,
+            eval,
+        }
+    }
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;com</span>, C: CurveAffine, M: MSM&lt;C&gt;&gt; Clone <span class="kw">for </span>VerifierQuery&lt;<span class="lifetime">&#39;com</span>, C, M&gt; {
