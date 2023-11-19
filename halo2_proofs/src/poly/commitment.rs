@@ -193,7 +193,11 @@ pub trait Verifier<'params, Scheme: CommitmentScheme> {
             > + Clone;
 }
 
-fn friendly_create_proof<
+/// This create proof function only require the prover to
+/// input the list of polynomials, evaluation point and commitments
+/// without having to initialize the whole transcript and
+/// query from the start.
+pub fn create_proof_version_two<
     'params,
     Scheme: CommitmentScheme,
     P: Prover<'params, Scheme>,
@@ -220,7 +224,7 @@ where
 
     let blind = Blind::new(&mut OsRng);
     // Add the commitment the polynomial p_i(x) to transcript
-    for i in 0..polynomial_list.len() {
+    for i in 0..commitment_list.len() {
         transcript.write_point(commitment_list[i]).unwrap();
     }
     // evaluate the values p_i(x_i) for i=1,2,...,n
@@ -237,7 +241,7 @@ where
         let temp = ProverQuery {
             point: points_list[i],
             poly: &polynomial_list[i],
-            blind: blind,
+            blind,
         };
         queries.push(temp);
     }
@@ -250,9 +254,10 @@ where
     transcript.finalize()
 }
 
-//Verify KZG openings
-// Used to create a friendly KZG API verification function
-fn friendly_verify<
+/// This verify proof function only require the prover to
+/// input the proof  without having to initialize the whole
+/// transcript and query from the start.
+pub fn verify_version_two<
     'a,
     'params,
     Scheme: CommitmentScheme,
